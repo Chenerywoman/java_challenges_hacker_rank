@@ -32,14 +32,12 @@ class Result {
 
     public static List<String> getArticleTitles(String author) {
 
+        // set parameters in a HashMap
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("author", author);
+        parameters.put("page", "1");
+
         try {
-
-            URL url = new URL("https://jsonmock.hackerrank.com/api/articles?");
-
-            // set parameters in a HashMap
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put("author", author);
-            parameters.put("page", "1");
 
             // transform Map into String of Required format
             StringBuilder params = new StringBuilder();
@@ -54,17 +52,15 @@ class Result {
             String formattedParams = paramsString.substring(0, paramsString.length() -1);
             System.out.println(formattedParams);
 
+            String urlString = "https://jsonmock.hackerrank.com/api/articles?";
+            String urlWithParams = urlString.concat(formattedParams);
+
+            URL url = new URL(urlWithParams);
+
             // set connection, request method and headers
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-type", "application/json");
-
-            // add parameters to request
-            con.setDoOutput(true);
-            DataOutputStream out = new DataOutputStream(con.getOutputStream());
-            out.writeBytes(formattedParams);
-            out.flush();
-            out.close();
 
             // set connection and read timeouts
             con.setConnectTimeout(5000);
@@ -91,8 +87,8 @@ class Result {
             con.disconnect();
         } catch (MalformedURLException exception){
 
-            // check this ***//
-            exception.printStackTrace();;
+            exception.printStackTrace();
+
         } catch (IOException exception){
 
             exception.printStackTrace();
