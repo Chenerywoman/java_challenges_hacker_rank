@@ -77,17 +77,6 @@ class Result {
             Reader streamReader = null;
             StringBuffer content = new StringBuffer();
 
-            // if (status > 299) {
-            //     streamReader = new InputStreamReader(con.getErrorStream());
-            //     // read error from the response and place in content string
-            //     BufferedReader in = new BufferedReader(streamReader);
-            //     String inputLine;
-            //     while ((inputLine = in.readLine()) !=null){
-            //         content.append(inputLine);
-            //     }
-            //     in.close();
-
-            // } else {
             streamReader = new InputStreamReader(con.getInputStream());
             // read response of the request and place in content string
             BufferedReader in = new BufferedReader(streamReader);
@@ -96,7 +85,6 @@ class Result {
                 content.append(inputLine);
             }
             in.close();
-            // }
 
             System.out.println(content.toString());
             // close the connection
