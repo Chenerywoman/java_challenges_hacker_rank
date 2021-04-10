@@ -1,9 +1,7 @@
 package com.challenges.author_articles;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
-
 import java.net.URL;
 import java.net.MalformedURLException;
 import javax.net.ssl.HttpsURLConnection;
@@ -12,7 +10,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 
 class Result {
 
@@ -29,12 +26,13 @@ class Result {
 
     public static List<String> getArticleTitles(String author) {
 
-        List<String> titles = new ArrayList<String>();
+        List<String> titles = new ArrayList<>();
+        String number = "1";
 
         // set parameters in a HashMap
         Map<String, String> parameters = new HashMap<>();
         parameters.put("author", author);
-        parameters.put("page", "1");
+        parameters.put("page", number);
 
         try {
 
@@ -72,7 +70,7 @@ class Result {
             System.out.println(status);
 
             // read response of the request and place in content string
-            StringBuffer content = new StringBuffer();
+            StringBuilder content = new StringBuilder();
 
             Reader streamReader = new InputStreamReader(con.getInputStream());
             BufferedReader in = new BufferedReader(streamReader);
@@ -94,15 +92,19 @@ class Result {
             JSONObject JsonObject = (JSONObject)obj;
             JSONArray JsonArray = (JSONArray)JsonObject.get("data");
 
-            Iterator objIterator = JsonArray.iterator();
-            int i = 0;
-            while(objIterator.hasNext()){
-                i++;
-                System.out.println(String.format("obj %d: %s", i, objIterator.next()));
+            // loop through JSON array
+            for (int i = 0; i < JsonArray.size(); i++){
+
+                JSONObject object = (JSONObject)JsonArray.get(i);
+
+                if (object.get("title") != null){
+                    titles.add(object.get("title").toString());
+                } else if (object.get("story_title") != null){
+                    titles.add(object.get("story_title").toString());
+                }
+                //System.out.println(object.get("title"));
             }
-
-            // System.out.println(JsonArray);
-
+            //System.out.println(JsonObject);
 
         } catch (MalformedURLException exception){
 
