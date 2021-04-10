@@ -1,8 +1,5 @@
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.math.*;
-import java.util.regex.*;
+package src.main.java.com.challenges.employees;
+
 abstract class Employee {
 
     public Employee (){};
@@ -16,7 +13,7 @@ abstract class Employee {
     abstract public String getGrade();
 
     void label(){
-        System.out.println("Employee's data:");
+        System.out.println("src.main.java.com.challenges.employees.Employee's data:");
     }
 
 }
