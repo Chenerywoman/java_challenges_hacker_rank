@@ -94,6 +94,23 @@ class Result {
         }
     }
 
+    public static JSONArray getData(String response){
+
+        JSONArray data = null;
+
+        try {
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(response);
+            JSONObject JsonObject = (JSONObject) obj;
+            data = (JSONArray)JsonObject.get("data");
+
+        } catch (ParseException exception){
+            exception.printStackTrace();
+        }
+
+        return data;
+    }
+
     public static List<String> extractTitles(JSONArray JsonArray){
 
         List<String> titles = new ArrayList<>();
@@ -125,31 +142,28 @@ class Result {
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(response);
             JSONObject JsonObject = (JSONObject)obj;
-            JSONArray JsonArray = (JSONArray)JsonObject.get("data");
+
+            JSONArray data = getData(response);
             int total_pages = Integer.parseInt(JsonObject.get("total_pages").toString());
 
-            List<String> firstTitles = extractTitles(JsonArray);
+            List<String> firstTitles = extractTitles(data);
             titles.addAll(firstTitles);
 
             if (total_pages > 1){
                 for (int j = 2; j < total_pages + 1; j++ ){
 
-                    String responseTwo = Result.getResponse(author, String.valueOf(j));
-                    JSONObject JsonObjectTwo = (JSONObject)parser.parse(responseTwo);
-                    JSONArray JsonArrayTwo = (JSONArray)JsonObjectTwo.get("data");
-                    System.out.println(JsonArrayTwo);
-
-                    List<String> moreTitles = extractTitles(JsonArrayTwo);
+                    String additionalResponse = Result.getResponse(author, String.valueOf(j));
+                    JSONArray additionalArray = getData(additionalResponse);
+                    List<String> moreTitles = extractTitles(additionalArray);
                     titles.addAll(moreTitles);
-
                 }
 
             }
+
         } catch (ParseException exception){
             exception.printStackTrace();
         }
 
-        //System.out.println(titles);
         return  titles;
     }
 }
