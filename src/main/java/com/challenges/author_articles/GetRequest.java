@@ -24,17 +24,14 @@ class Result {
      *
      */
 
-    public static List<String> getArticleTitles(String author) {
-
-        List<String> titles = new ArrayList<>();
-        String number = "1";
-
-        // set parameters in a HashMap
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("author", author);
-        parameters.put("page", number);
+    public static String getResponse(String author, String page){
 
         try {
+
+            // set parameters in a HashMap
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("author", author);
+            parameters.put("page", page);
 
             // transform Map into String of Required format
             StringBuilder params = new StringBuilder();
@@ -49,7 +46,6 @@ class Result {
             // format the params
             String paramsString = params.toString();
             String formattedParams = paramsString.substring(0, paramsString.length() -1);
-            System.out.println(formattedParams);
 
             String urlString = "https://jsonmock.hackerrank.com/api/articles?";
             String urlWithParams = urlString.concat(formattedParams);
@@ -85,12 +81,33 @@ class Result {
 
             // convert content from StringBuffer to String
             String response = content.toString();
+            return response;
 
+        } catch (MalformedURLException exception){
+
+            exception.printStackTrace();
+            return null;
+        }  catch (IOException exception){
+
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<String> getArticleTitles(String author) {
+
+        List<String> titles = new ArrayList<>();
+        String number = "1";
+
+        String response = Result.getResponse(author, number);
+
+        try {
             // parse String to JSON object & extract data as JSONArray
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(response);
             JSONObject JsonObject = (JSONObject)obj;
             JSONArray JsonArray = (JSONArray)JsonObject.get("data");
+            int total_pages = Integer.parseInt(JsonObject.get("total_pages").toString());
 
             // loop through JSON array
             for (int i = 0; i < JsonArray.size(); i++){
@@ -102,24 +119,36 @@ class Result {
                 } else if (object.get("story_title") != null){
                     titles.add(object.get("story_title").toString());
                 }
-                //System.out.println(object.get("title"));
             }
-            //System.out.println(JsonObject);
 
-        } catch (MalformedURLException exception){
+            if (total_pages > 1){
+                for (int j = 2; j < total_pages + 1; j++ ){
 
-            exception.printStackTrace();
+                    String responseTwo = Result.getResponse(author, String.valueOf(j));
+                    JSONObject JsonObjectTwo = (JSONObject)parser.parse(responseTwo);
+                    JSONArray JsonArrayTwo = (JSONArray)JsonObjectTwo.get("data");
+                    System.out.println(JsonArrayTwo);
 
-        } catch (IOException exception){
+                    for (int k = 0; k < JsonArrayTwo.size(); k++){
 
-            exception.printStackTrace();
+                        JSONObject object = (JSONObject)JsonArrayTwo.get(k);
 
+                        if (object.get("title") != null){
+                            titles.add(object.get("title").toString());
+                        } else if (object.get("story_title") != null){
+                            titles.add(object.get("story_title").toString());
+                        }
+
+                    }
+
+                }
+
+            }
         } catch (ParseException exception){
-
             exception.printStackTrace();
-
         }
 
+        //System.out.println(titles);
         return  titles;
     }
 }
