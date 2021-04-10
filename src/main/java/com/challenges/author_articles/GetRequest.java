@@ -94,21 +94,24 @@ class Result {
         }
     }
 
-    public static JSONArray getData(String response){
+    public static JSONObject getJsonObject(String response){
 
-        JSONArray data = null;
+        JSONObject JsonObj = null;
 
         try {
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(response);
-            JSONObject JsonObject = (JSONObject) obj;
-            data = (JSONArray)JsonObject.get("data");
+            JsonObj = (JSONObject) obj;
 
         } catch (ParseException exception){
             exception.printStackTrace();
         }
 
-        return data;
+        return JsonObj;
+    }
+
+    public static JSONArray getData(JSONObject JsonObject){
+        return (JSONArray)JsonObject.get("data");
     }
 
     public static List<String> extractTitles(JSONArray JsonArray){
@@ -137,31 +140,24 @@ class Result {
 
         String response = Result.getResponse(author, number);
 
-        try {
-            // parse String to JSON object & extract data as JSONArray
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(response);
-            JSONObject JsonObject = (JSONObject)obj;
+        JSONObject JsonObject = getJsonObject(response);
 
-            JSONArray data = getData(response);
-            int total_pages = Integer.parseInt(JsonObject.get("total_pages").toString());
+        JSONArray data = getData(JsonObject);
+        int total_pages = Integer.parseInt(JsonObject.get("total_pages").toString());
 
-            List<String> firstTitles = extractTitles(data);
-            titles.addAll(firstTitles);
+        List<String> firstTitles = extractTitles(data);
+        titles.addAll(firstTitles);
 
-            if (total_pages > 1){
-                for (int j = 2; j < total_pages + 1; j++ ){
+        if (total_pages > 1){
+            for (int j = 2; j < total_pages + 1; j++ ){
 
-                    String additionalResponse = Result.getResponse(author, String.valueOf(j));
-                    JSONArray additionalArray = getData(additionalResponse);
-                    List<String> moreTitles = extractTitles(additionalArray);
-                    titles.addAll(moreTitles);
-                }
-
+                String additionalResponse = Result.getResponse(author, String.valueOf(j));
+                JSONObject additionalJsonObject = getJsonObject(additionalResponse);
+                JSONArray additionaldata = getData(additionalJsonObject);
+                List<String> moreTitles = extractTitles(additionaldata);
+                titles.addAll(moreTitles);
             }
 
-        } catch (ParseException exception){
-            exception.printStackTrace();
         }
 
         return  titles;
