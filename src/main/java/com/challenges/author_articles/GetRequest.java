@@ -94,6 +94,25 @@ class Result {
         }
     }
 
+    public static List<String> extractTitles(JSONArray JsonArray){
+
+        List<String> titles = new ArrayList<>();
+
+        // loop through JSON array
+        for (int i = 0; i < JsonArray.size(); i++){
+
+            JSONObject object = (JSONObject)JsonArray.get(i);
+
+            if (object.get("title") != null){
+                titles.add(object.get("title").toString());
+            } else if (object.get("story_title") != null){
+                titles.add(object.get("story_title").toString());
+            }
+        }
+
+        return titles;
+    }
+
     public static List<String> getArticleTitles(String author) {
 
         List<String> titles = new ArrayList<>();
@@ -109,17 +128,8 @@ class Result {
             JSONArray JsonArray = (JSONArray)JsonObject.get("data");
             int total_pages = Integer.parseInt(JsonObject.get("total_pages").toString());
 
-            // loop through JSON array
-            for (int i = 0; i < JsonArray.size(); i++){
-
-                JSONObject object = (JSONObject)JsonArray.get(i);
-
-                if (object.get("title") != null){
-                    titles.add(object.get("title").toString());
-                } else if (object.get("story_title") != null){
-                    titles.add(object.get("story_title").toString());
-                }
-            }
+            List<String> firstTitles = extractTitles(JsonArray);
+            titles.addAll(firstTitles);
 
             if (total_pages > 1){
                 for (int j = 2; j < total_pages + 1; j++ ){
