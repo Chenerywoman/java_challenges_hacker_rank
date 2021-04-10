@@ -1,4 +1,4 @@
-package src.main.java.com.challenges.employees;
+package com.challenges.employees;
 
 abstract class Employee {
 
@@ -13,7 +13,7 @@ abstract class Employee {
     abstract public String getGrade();
 
     void label(){
-        System.out.println("src.main.java.com.challenges.employees.Employee's data:");
+        System.out.println("com.challenges.employees.Employee's data:");
     }
 
 }
