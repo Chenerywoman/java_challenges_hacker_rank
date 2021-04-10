@@ -1,12 +1,8 @@
-package src.main.java.com.challenges.getrequests;
+package com.challenges.author_articles;
 
 import java.io.*;
 import java.text.*;
 import java.util.*;
-
-import static java.util.stream.Collectors.joining;
-
-import com.google.gson.Gson;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -106,7 +102,6 @@ class Result {
             }
 
             // System.out.println(JsonArray);
-
 
 
         } catch (MalformedURLException exception){
