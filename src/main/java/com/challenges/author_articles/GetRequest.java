@@ -139,17 +139,8 @@ class Result {
                     JSONArray JsonArrayTwo = (JSONArray)JsonObjectTwo.get("data");
                     System.out.println(JsonArrayTwo);
 
-                    for (int k = 0; k < JsonArrayTwo.size(); k++){
-
-                        JSONObject object = (JSONObject)JsonArrayTwo.get(k);
-
-                        if (object.get("title") != null){
-                            titles.add(object.get("title").toString());
-                        } else if (object.get("story_title") != null){
-                            titles.add(object.get("story_title").toString());
-                        }
-
-                    }
+                    List<String> moreTitles = extractTitles(JsonArrayTwo);
+                    titles.addAll(moreTitles);
 
                 }
 
